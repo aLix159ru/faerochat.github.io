@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Faerochat — Онлайн-магазин</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --bg-soft: #eef1ff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --card: #ffffff;
+      --accent: #6366f1;
+      --accent-2: #a855f7;
+      --glow: rgba(99,102,241,.6);
+    }
+    body.dark {
+      --bg: #070b1a;
+      --bg-soft: #0c1230;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --card: #0f172a;
+      --accent: #818cf8;
+      --accent-2: #c084fc;
+      --glow: rgba(129,140,248,.7);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); transition: 0.4s; }
+    header { background: var(--bg-soft); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo img { width: 48px; height: 48px; border-radius: 12px; }
+    .btn { padding: 8px 16px; border-radius: 12px; border: none; cursor: pointer; font-weight: 600; }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: white; }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-ghost { background: transparent; }
+    .products { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 20px; max-width: 1200px; margin: 40px auto; padding: 0 24px; }
+    .product { background: var(--card); border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,.15); display: flex; flex-direction: column; justify-content: space-between; }
+    .product img { width: 100%; height: 180px; object-fit: cover; border-radius: 14px; margin-bottom: 12px; }
+    .price { font-weight: 700; font-size: 20px; margin: 12px 0; }
+    .cart { position: fixed; right: 20px; bottom: 20px; width: 280px; background: var(--card); border-radius: 20px; padding: 16px; box-shadow: 0 15px 40px rgba(0,0,0,.3); }
+    .cart ul { list-style: none; padding: 0; margin: 0 0 10px 0; }
+    .cart li { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px; }
+    .cart li span { cursor: pointer; color: crimson; }
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.65); display: none; align-items: center; justify-content: center; z-index: 100; }
+    .modal-box { background: var(--card); padding: 24px; border-radius: 20px; width: 90%; max-width: 400px; }
+    input { width: 100%; padding: 10px; margin: 8px 0; border-radius: 12px; border: 1px solid #ccc; }
+    footer { text-align: center; padding: 40px; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><img src="https://t.me/faerochat" alt="Faerochat"><strong>Faerochat</strong></div>
+  <div>
+    <button class="btn btn-ghost" onclick="toggleTheme()">🌙</button>
+  </div>
+</header>
+
+<section class="products">
+  <div class="product">
+    <img src="https://cdn.pixabay.com/photo/2013/07/12/18/25/car-156360_1280.png" alt="Машина">
+    <h3>🚗 Машина</h3>
+    <p>Современный автомобиль для города и путешествий</p>
+    <div class="price">1 500 000 ₽</div>
+    <button class="btn btn-primary" onclick="addToCart('Машина',1500000)">В корзину</button>
+  </div>
+  <div class="product">
+    <img src="https://cdn.pixabay.com/photo/2016/03/27/22/22/sneakers-1283765_1280.jpg" alt="Кроссовки">
+    <h3>👟 Кроссовки</h3>
+    <p>Удобные и стильные кроссовки на каждый день</p>
+    <div class="price">6 990 ₽</div>
+    <button class="btn btn-primary" onclick="addToCart('Кроссовки',6990)">В корзину</button>
+  </div>
+  <div class="product">
+    <img src="https://cdn.pixabay.com/photo/2012/04/12/20/11/broom-29837_1280.png" alt="Веник">
+    <h3>🧹 Веник</h3>
+    <p>Надёжный веник для дома и дачи</p>
+    <div class="price">390 ₽</div>
+    <button class="btn btn-primary" onclick="addToCart('Веник',390)">В корзину</button>
+  </div>
+</section>
+
+<div class="cart">
+  <strong>🛒 Корзина</strong>
+  <ul id="cartItems"></ul>
+  <b>Итого: <span id="total">0</span> ₽</b><br><br>
+  <button class="btn btn-primary" onclick="openModal()">Оформить заказ</button>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h3>Оплата</h3>
+    <input placeholder="Имя">
+    <input placeholder="Email">
+    <input placeholder="Карта">
+    <br><br>
+    <button class="btn btn-primary" onclick="finishOrder()">Оплатить</button>
+  </div>
+</div>
+
+<footer>© 2025 Faerochat — Онлайн-магазин</footer>
+
+<script>
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+  function renderCart() {
+    const ul = document.getElementById('cartItems');
+    ul.innerHTML = '';
+    let total = 0;
+    cart.forEach((item,index)=>{
+      total += item.price;
+      const li = document.createElement('li');
+      li.textContent = `${item.name} — ${item.price} ₽ `;
+      const span = document.createElement('span');
+      span.textContent = '✕';
+      span.onclick = ()=>{ removeFromCart(index); };
+      li.appendChild(span);
+      ul.appendChild(li);
+    });
+    document.getElementById('total').textContent = total;
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }
+
+  function addToCart(name,price){ cart.push({name,price}); renderCart(); }
+  function removeFromCart(index){ cart.splice(index,1); renderCart(); }
+  function openModal(){ document.getElementById('modal').style.display='flex'; }
+  function finishOrder(){ alert('Заказ оформлен!'); cart=[]; renderCart(); document.getElementById('modal').style.display='none'; }
+  function toggleTheme(){ document.body.classList.toggle('dark'); }
+  renderCart();
+</script>
+
+</body>
+</html>
