@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Faerochat — Онлайн-магазин</title>
+
   <style>
     :root {
       --bg: #f5f7fb;
@@ -13,7 +14,6 @@
       --card: #ffffff;
       --accent: #6366f1;
       --accent-2: #a855f7;
-      --glow: rgba(99,102,241,.6);
     }
     body.dark {
       --bg: #070b1a;
@@ -23,83 +23,186 @@
       --card: #0f172a;
       --accent: #818cf8;
       --accent-2: #c084fc;
-      --glow: rgba(129,140,248,.7);
     }
+
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); transition: 0.4s; }
-    header { background: var(--bg-soft); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
-    .logo { display: flex; align-items: center; gap: 12px; }
-    .logo img { width: 48px; height: 48px; border-radius: 12px; }
-    .btn { padding: 8px 16px; border-radius: 12px; border: none; cursor: pointer; font-weight: 600; }
-    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: white; }
-    .btn-primary:hover { opacity: 0.85; }
-    .btn-ghost { background: transparent; }
-    .products { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 20px; max-width: 1200px; margin: 40px auto; padding: 0 24px; }
-    .product { background: var(--card); border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,.15); display: flex; flex-direction: column; justify-content: space-between; }
-    .product img { width: 100%; height: 180px; object-fit: cover; border-radius: 14px; margin-bottom: 12px; }
-    .price { font-weight: 700; font-size: 20px; margin: 12px 0; }
-    .cart { position: fixed; right: 20px; bottom: 20px; width: 280px; background: var(--card); border-radius: 20px; padding: 16px; box-shadow: 0 15px 40px rgba(0,0,0,.3); }
-    .cart ul { list-style: none; padding: 0; margin: 0 0 10px 0; }
-    .cart li { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px; }
-    .cart li span { cursor: pointer; color: crimson; }
-    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.65); display: none; align-items: center; justify-content: center; z-index: 100; }
-    .modal-box { background: var(--card); padding: 24px; border-radius: 20px; width: 90%; max-width: 400px; }
-    input { width: 100%; padding: 10px; margin: 8px 0; border-radius: 12px; border: 1px solid #ccc; }
-    footer { text-align: center; padding: 40px; color: var(--muted); }
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: .3s;
+    }
+
+    header {
+      background: var(--bg-soft);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    .logo img {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+
+    .product {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.15);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 14px;
+      margin-bottom: 12px;
+    }
+
+    .price {
+      font-weight: 700;
+      font-size: 20px;
+      margin: 12px 0;
+    }
+
+    .cart {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      width: 280px;
+      background: var(--card);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 15px 40px rgba(0,0,0,.3);
+    }
+
+    .cart ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 10px;
+    }
+
+    .cart li {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .cart li span {
+      cursor: pointer;
+      color: crimson;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+    }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="logo"><img src="img/faerochat.jpg" alt="Faerochat"><strong>Faerochat</strong></div>
-  <div>
-    <button class="btn btn-ghost" onclick="toggleTheme()">🌙</button>
+  <div class="logo">
+    <img src="img/faerochat.jpg" alt="Faerochat">
+    Faerochat
   </div>
+  <button class="btn" onclick="toggleTheme()">🌙</button>
 </header>
 
 <section class="products">
+
+  <!-- Машина -->
   <div class="product">
-    <img src="img/Machina_faerochat.jpg" alt="Машина">
+    <img src="img/Machina_faerochat.jpg">
     <h3>🚗 Машина</h3>
-    <p>Современный автомобиль для города и путешествий</p>
+    <p>Самый лучший современный автомобиль!</p>
     <div class="price">1 500 000 $</div>
     <button class="btn btn-primary" onclick="addToCart('Машина',1500000)">В корзину</button>
   </div>
+
+  <!-- Кроссовки -->
   <div class="product">
-    <img src="img/Crossovki_faerochat.jpg" alt="Кроссовки">
+    <img src="img/Crossovki_faerochat.jpg">
     <h3>👟 Кроссовки</h3>
-    <p>Удобные и стильные кроссовки на каждый день</p>
+    <p>Удобные и стильные</p>
     <div class="price">6 990 $</div>
     <button class="btn btn-primary" onclick="addToCart('Кроссовки',6990)">В корзину</button>
   </div>
+
+  <!-- Веник -->
   <div class="product">
-    <img src="img/Venik_faerochat.jpg" alt="Веник">
+    <img src="img/Venik_faerochat.jpg">
     <h3>🧹 Веник</h3>
-    <p>Надёжный веник для дома и дачи</p>
+    <p>Надёжный для дома</p>
     <div class="price">390 $</div>
     <button class="btn btn-primary" onclick="addToCart('Веник',390)">В корзину</button>
   </div>
+
+  <!-- Футболка -->
+  <div class="product">
+    <img src="img/Fytbloka_faerochat.jpg">
+    <h3>👕 Футболка</h3>
+    <p>Футболка с ДМИТРИЕМ СТЕКЛОПАКЕТОМ! Хлопковая, удобная</p>
+    <div class="price">1 290 $</div>
+    <button class="btn btn-primary" onclick="addToCart('Футболка',1290)">В корзину</button>
+  </div>
+
+  <!-- Nintendo Wii -->
+  <div class="product">
+    <img src="img/Wii_faerochat.jpg">
+    <h3>🎮 Nintendo Wii</h3>
+    <p>Легендарная игровая приставка</p>
+    <div class="price">10 000 000 000 000$</div>
+    <button class="btn btn-primary" onclick="addToCart('Nintendo Wii',9990)">В корзину</button>
+  </div>
+
 </section>
 
 <div class="cart">
   <strong>🛒 Корзина</strong>
   <ul id="cartItems"></ul>
-  <b>Итого: <span id="total">0</span> ₽</b><br><br>
-  <button class="btn btn-primary" onclick="openModal()">Оформить заказ</button>
+  <b>Итого: <span id="total">0</span> ₽</b>
 </div>
 
-<div class="modal" id="modal">
-  <div class="modal-box">
-    <h3>Оплата</h3>
-    <input placeholder="Имя">
-    <input placeholder="Email">
-    <input placeholder="Карта">
-    <br><br>
-    <button class="btn btn-primary" onclick="finishOrder()">Оплатить</button>
-  </div>
-</div>
-
-<footer>© 2025 Faerochat — Онлайн-магазин</footer>
+<footer>© 2025 Faerochat</footer>
 
 <script>
   let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -108,25 +211,30 @@
     const ul = document.getElementById('cartItems');
     ul.innerHTML = '';
     let total = 0;
-    cart.forEach((item,index)=>{
+    cart.forEach((item,i)=>{
       total += item.price;
       const li = document.createElement('li');
-      li.textContent = `${item.name} — ${item.price} ₽ `;
-      const span = document.createElement('span');
-      span.textContent = '✕';
-      span.onclick = ()=>{ removeFromCart(index); };
-      li.appendChild(span);
+      li.innerHTML = `${item.name} — ${item.price} ₽ <span onclick="removeFromCart(${i})">✕</span>`;
       ul.appendChild(li);
     });
     document.getElementById('total').textContent = total;
     localStorage.setItem('cart', JSON.stringify(cart));
   }
 
-  function addToCart(name,price){ cart.push({name,price}); renderCart(); }
-  function removeFromCart(index){ cart.splice(index,1); renderCart(); }
-  function openModal(){ document.getElementById('modal').style.display='flex'; }
-  function finishOrder(){ alert('Заказ оформлен!'); cart=[]; renderCart(); document.getElementById('modal').style.display='none'; }
-  function toggleTheme(){ document.body.classList.toggle('dark'); }
+  function addToCart(name, price) {
+    cart.push({name, price});
+    renderCart();
+  }
+
+  function removeFromCart(i) {
+    cart.splice(i,1);
+    renderCart();
+  }
+
+  function toggleTheme() {
+    document.body.classList.toggle('dark');
+  }
+
   renderCart();
 </script>
 
