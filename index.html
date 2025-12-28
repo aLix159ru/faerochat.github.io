@@ -155,7 +155,7 @@
     <h3>🚗 Машина</h3>
     <p>Самый лучший современный автомобиль!</p>
     <div class="price">1 500 000 $</div>
-    <button class="btn btn-primary" onclick="addToCart('Машина',1500000$)">В корзину</button>
+    <button class="btn btn-primary" onclick="addToCart('Машина',1500000)">В корзину</button>
   </div>
 
   <!-- Кроссовки -->
@@ -214,7 +214,7 @@
     cart.forEach((item,i)=>{
       total += item.price;
       const li = document.createElement('li');
-      li.innerHTML = `${item.name} — ${item.price} ₽ <span onclick="removeFromCart(${i})">✕</span>`;
+      li.innerHTML = `${item.name} — ${item.price} $ <span onclick="removeFromCart(${i})">✕</span>`;
       ul.appendChild(li);
     });
     document.getElementById('total').textContent = total;
