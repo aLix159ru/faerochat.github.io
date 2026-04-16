@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Faerochat — Aero Store</title>
+  <title>Faerochat — Aero Store & Quiz</title>
   <style>
     :root {
       --bg: #f0f4f8;
@@ -61,6 +61,11 @@
       height: 40px;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
     }
 
     .btn {
@@ -154,7 +159,6 @@
 
     .remove { color: #ef4444; cursor: pointer; font-weight: bold; }
 
-    /* Виджет статистики */
     .stats-widget {
       position: fixed;
       left: 24px;
@@ -183,7 +187,7 @@
 
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-    /* Модальное окно */
+    /* Модальные окна */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -209,11 +213,12 @@
       max-width: 450px;
       transform: scale(0.9);
       transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-align: center;
     }
 
     .modal-overlay.active .modal-content { transform: scale(1); }
 
-    .form-group { margin-bottom: 16px; }
+    .form-group { margin-bottom: 16px; text-align: left; }
     .form-group label { display: block; margin-bottom: 6px; font-size: 14px; color: var(--muted); }
     .form-group input, .form-group select {
       width: 100%;
@@ -224,6 +229,36 @@
       color: var(--text);
       font-family: inherit;
       outline: none;
+    }
+
+    /* Квиз стили */
+    .quiz-container {
+      position: relative;
+      margin: 20px 0;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .quiz-container img {
+      width: 100%;
+      display: block;
+    }
+    .quiz-input-box {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+    }
+    .quiz-input-box input {
+      width: 100%;
+      padding: 10px;
+      border: 3px solid #000;
+      background: white;
+      color: black;
+      font-weight: bold;
+      text-align: center;
+      font-size: 1.2em;
     }
 
     footer {
@@ -241,14 +276,17 @@
     <img src="img/faerochat.jpg" alt="Logo">
     <span>Faerochat</span>
   </div>
-  <button class="btn" style="background: var(--card); border: 1px solid var(--glass-border)" onclick="toggleTheme()" id="themeBtn">🌙</button>
+  <div class="header-actions">
+    <button class="btn" style="background: var(--card); border: 1px solid var(--glass-border)" onclick="openQuiz()">🧩 Квиз</button>
+    <button class="btn" style="background: var(--card); border: 1px solid var(--glass-border)" onclick="toggleTheme()" id="themeBtn">🌙</button>
+  </div>
 </header>
 
 <main class="products" id="productGrid"></main>
 
 <div class="stats-widget">
   <div class="stats-dot"></div>
-  <span>Всего заказов выполнено: <strong id="orderCountDisplay">...</strong></span>
+  <span>Всего заказов: <strong id="orderCountDisplay">...</strong></span>
 </div>
 
 <div class="cart" id="cartOverlay">
@@ -266,7 +304,7 @@
 
 <div class="modal-overlay" id="orderModal">
   <div class="modal-content">
-    <h2 style="margin: 0 0 20px 0;">📦 Оформление</h2>
+    <h2 style="margin: 0 0 20px 0; text-align: left;">📦 Оформление</h2>
     <div class="form-group">
       <label>Ваше имя</label>
       <input type="text" id="orderName" placeholder="Дмитрий Стеклопакет">
@@ -279,15 +317,22 @@
       <label>Адрес доставки</label>
       <input type="text" id="orderAddress" placeholder="ул. Аэродинамическая, д. 7">
     </div>
-    <div class="form-group">
-      <label>Способ оплаты</label>
-      <select id="paymentMethod">
-        <option value="card">Карта</option>
-        <option value="broom">Веником при получении</option>
-      </select>
-    </div>
     <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="submitOrder()">Купить</button>
     <button class="btn" style="width: 100%; margin-top: 10px; background: transparent; color: var(--muted)" onclick="closeOrderModal()">Отмена</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="quizModal">
+  <div class="modal-content">
+    <h2 style="margin-top: 0;">Что это за блюдо?</h2>
+    <div class="quiz-container">
+      <img src="img/photo_2026-04-16_19-49-27.jpg" alt="Meme Quiz">
+      <div class="quiz-input-box">
+        <input type="text" id="quizAnswer" placeholder="Введите название...">
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width: 100%;" onclick="checkQuiz()">Проверить</button>
+    <button class="btn" style="width: 100%; margin-top: 10px; background: transparent; color: var(--muted)" onclick="closeQuiz()">Я не знаю...</button>
   </div>
 </div>
 
@@ -365,6 +410,24 @@
 
   function closeOrderModal() { document.getElementById('orderModal').classList.remove('active'); }
 
+  // КВИЗ ЛОГИКА
+  function openQuiz() { document.getElementById('quizModal').classList.add('active'); }
+  function closeQuiz() { 
+    document.getElementById('quizModal').classList.remove('active');
+    document.getElementById('quizAnswer').value = ''; 
+  }
+
+  function checkQuiz() {
+    const val = document.getElementById('quizAnswer').value.trim().toLowerCase();
+    // Ответы, которые мы принимаем
+    if (val.includes('вода') || val.includes('суп') || val.includes('дмитрий')) {
+      alert("ШЕФ-ПОВАР ОДОБРЯЕТ! Это настоящий кулинарный шедевр.");
+      closeQuiz();
+    } else {
+      alert("Повар недоволен... Попробуй еще раз!");
+    }
+  }
+
   async function submitOrder() {
     const data = {
       name: document.getElementById('orderName').value,
@@ -375,14 +438,21 @@
 
     try {
       await fetch(API_URL, { method: "POST", body: JSON.stringify(data) });
-      alert(`Ура, ${data.name}! Заказ отправлен в таблицу.`);
+      alert(`Ура, ${data.name}! Заказ отправлен.`);
       cart = []; renderCart(); closeOrderModal(); updateOrderDisplay();
-    } catch (e) { alert("Ошибка API. Проверь ссылку в коде!"); }
+    } catch (e) { alert("Ошибка API!"); }
   }
 
   function toggleTheme() {
     const dark = document.body.classList.toggle('dark');
     document.getElementById('themeBtn').textContent = dark ? '☀️' : '🌙';
+  }
+
+  window.onclick = function(event) {
+    if (event.target.className === 'modal-overlay active') {
+      closeOrderModal();
+      closeQuiz();
+    }
   }
 
   renderProducts(); renderCart(); updateOrderDisplay();
