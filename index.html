@@ -3,76 +3,87 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Faerochat — Онлайн-магазин</title>
-
+  <title>Faerochat — Aero Store</title>
   <style>
     :root {
-      --bg: #f5f7fb;
-      --bg-soft: #eef1ff;
+      --bg: #f0f4f8;
+      --bg-soft: rgba(238, 241, 255, 0.8);
       --text: #0f172a;
       --muted: #64748b;
-      --card: #ffffff;
+      --card: rgba(255, 255, 255, 0.7);
       --accent: #6366f1;
       --accent-2: #a855f7;
+      --glass-border: rgba(255, 255, 255, 0.5);
     }
+
     body.dark {
-      --bg: #070b1a;
-      --bg-soft: #0c1230;
+      --bg: #050814;
+      --bg-soft: rgba(12, 18, 48, 0.8);
       --text: #e5e7eb;
       --muted: #94a3b8;
-      --card: #0f172a;
-      --accent: #818cf8;
-      --accent-2: #c084fc;
+      --card: rgba(15, 23, 42, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.1);
     }
 
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: system-ui, sans-serif;
+      font-family: 'Segoe UI', system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
-      transition: .3s;
+      transition: background 0.3s, color 0.3s;
+      min-height: 100vh;
     }
 
     header {
       background: var(--bg-soft);
+      backdrop-filter: blur(12px);
       padding: 16px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--glass-border);
     }
 
     .logo {
       display: flex;
       align-items: center;
       gap: 12px;
-      font-weight: 700;
-      font-size: 20px;
+      font-weight: 800;
+      font-size: 22px;
     }
 
     .logo img {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
     }
 
     .btn {
-      padding: 10px 16px;
+      padding: 10px 20px;
       border-radius: 12px;
       border: none;
       cursor: pointer;
       font-weight: 600;
+      transition: all 0.2s;
     }
+
+    .btn:active { transform: scale(0.95); }
 
     .btn-primary {
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
       color: #fff;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
     }
 
     .products {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
       max-width: 1200px;
       margin: 40px auto;
       padding: 0 24px;
@@ -80,60 +91,146 @@
 
     .product {
       background: var(--card);
-      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
       padding: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,.15);
       display: flex;
       flex-direction: column;
+      transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .product:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
     }
 
     .product img {
       width: 100%;
-      height: 180px;
+      height: 200px;
       object-fit: cover;
-      border-radius: 14px;
-      margin-bottom: 12px;
+      border-radius: 18px;
+      margin-bottom: 16px;
     }
 
     .price {
-      font-weight: 700;
-      font-size: 20px;
+      font-weight: 800;
+      font-size: 22px;
       margin: 12px 0;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .cart {
       position: fixed;
-      right: 20px;
-      bottom: 20px;
-      width: 280px;
+      right: 24px;
+      bottom: 24px;
+      width: 320px;
       background: var(--card);
-      border-radius: 20px;
-      padding: 16px;
-      box-shadow: 0 15px 40px rgba(0,0,0,.3);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+      z-index: 99;
     }
 
     .cart ul {
       list-style: none;
       padding: 0;
-      margin: 0 0 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      margin: 0 0 15px 0;
     }
 
     .cart li {
       display: flex;
       justify-content: space-between;
-      font-size: 14px;
-      margin-bottom: 6px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
     }
 
-    .cart li span {
-      cursor: pointer;
-      color: crimson;
+    .remove { color: #ef4444; cursor: pointer; font-weight: bold; }
+
+    /* Виджет статистики */
+    .stats-widget {
+      position: fixed;
+      left: 24px;
+      bottom: 24px;
+      background: var(--card);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--glass-border);
+      padding: 12px 20px;
+      border-radius: 20px;
+      font-size: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      z-index: 90;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stats-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #22c55e;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* Модальное окно */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      transition: 0.3s;
+    }
+
+    .modal-overlay.active { display: flex; opacity: 1; }
+
+    .modal-content {
+      background: var(--card);
+      backdrop-filter: blur(25px);
+      border: 1px solid var(--glass-border);
+      padding: 32px;
+      border-radius: 30px;
+      width: 90%;
+      max-width: 450px;
+      transform: scale(0.9);
+      transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .modal-overlay.active .modal-content { transform: scale(1); }
+
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; margin-bottom: 6px; font-size: 14px; color: var(--muted); }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text);
+      font-family: inherit;
+      outline: none;
     }
 
     footer {
       text-align: center;
-      padding: 40px;
+      padding: 60px 20px;
       color: var(--muted);
+      font-size: 14px;
     }
   </style>
 </head>
@@ -141,102 +238,154 @@
 
 <header>
   <div class="logo">
-    <img src="img/faerochat.jpg" alt="Faerochat">
-    Faerochat
+    <img src="img/faerochat.jpg" alt="Logo">
+    <span>Faerochat</span>
   </div>
-  <button class="btn" onclick="toggleTheme()">🌙</button>
+  <button class="btn" style="background: var(--card); border: 1px solid var(--glass-border)" onclick="toggleTheme()" id="themeBtn">🌙</button>
 </header>
 
-<section class="products">
+<main class="products" id="productGrid"></main>
 
-  <!-- Машина -->
-  <div class="product">
-    <img src="img/Machina_faerochat.jpg">
-    <h3>🚗 Машина</h3>
-    <p>Самый лучший современный автомобиль!</p>
-    <div class="price">1 500 000 $</div>
-    <button class="btn btn-primary" onclick="addToCart('Машина',1500000)">В корзину</button>
-  </div>
-
-  <!-- Кроссовки -->
-  <div class="product">
-    <img src="img/Crossovki_faerochat.jpg">
-    <h3>👟 Кроссовки</h3>
-    <p>Удобные и стильные</p>
-    <div class="price">6 990 $</div>
-    <button class="btn btn-primary" onclick="addToCart('Кроссовки',6990)">В корзину</button>
-  </div>
-
-  <!-- Веник -->
-  <div class="product">
-    <img src="img/Venik_faerochat.jpg">
-    <h3>🧹 Веник</h3>
-    <p>Надёжный для дома</p>
-    <div class="price">390 $</div>
-    <button class="btn btn-primary" onclick="addToCart('Веник',390)">В корзину</button>
-  </div>
-
-  <!-- Футболка -->
-  <div class="product">
-    <img src="img/Fytbloka_faerochat.jpg">
-    <h3>👕 Футболка</h3>
-    <p>Футболка с ДМИТРИЕМ СТЕКЛОПАКЕТОМ! Хлопковая, удобная</p>
-    <div class="price">1 290 $</div>
-    <button class="btn btn-primary" onclick="addToCart('Футболка',1290)">В корзину</button>
-  </div>
-
-  <!-- Nintendo Wii -->
-  <div class="product">
-    <img src="img/Wii_faerochat.jpg">
-    <h3>🎮 Nintendo Wii</h3>
-    <p>Легендарная игровая приставка</p>
-    <div class="price">10000000000000$</div>
-    <button class="btn btn-primary" onclick="addToCart('Nintendo Wii',10000000000000)">В корзину</button>
-  </div>
-
-</section>
-
-<div class="cart">
-  <strong>🛒 Корзина</strong>
-  <ul id="cartItems"></ul>
-  <b>Итого: <span id="total">0</span> ₽</b>
+<div class="stats-widget">
+  <div class="stats-dot"></div>
+  <span>Всего заказов выполнено: <strong id="orderCountDisplay">...</strong></span>
 </div>
 
-<footer>© 2026 Faerochat</footer>
+<div class="cart" id="cartOverlay">
+  <div style="display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center;">
+    <strong>🛒 Корзина</strong>
+    <span id="cartCount" style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; font-size: 12px;">0</span>
+  </div>
+  <ul id="cartItems"></ul>
+  <div style="margin-bottom: 15px; display: flex; justify-content: space-between;">
+    <span>Итого:</span>
+    <b><span id="total">0</span> ₽</b>
+  </div>
+  <button class="btn btn-primary" style="width: 100%" onclick="openOrderModal()">Оформить заказ</button>
+</div>
+
+<div class="modal-overlay" id="orderModal">
+  <div class="modal-content">
+    <h2 style="margin: 0 0 20px 0;">📦 Оформление</h2>
+    <div class="form-group">
+      <label>Ваше имя</label>
+      <input type="text" id="orderName" placeholder="Дмитрий Стеклопакет">
+    </div>
+    <div class="form-group">
+      <label>Ваш e-mail</label>
+      <input type="email" id="orderEmail" placeholder="faero@mail.com">
+    </div>
+    <div class="form-group">
+      <label>Адрес доставки</label>
+      <input type="text" id="orderAddress" placeholder="ул. Аэродинамическая, д. 7">
+    </div>
+    <div class="form-group">
+      <label>Способ оплаты</label>
+      <select id="paymentMethod">
+        <option value="card">Карта</option>
+        <option value="broom">Веником при получении</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="submitOrder()">Купить</button>
+    <button class="btn" style="width: 100%; margin-top: 10px; background: transparent; color: var(--muted)" onclick="closeOrderModal()">Отмена</button>
+  </div>
+</div>
+
+<footer>© 2026 Faerochat Store — Aero Style</footer>
 
 <script>
-  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  // ЗАМЕНИТЕ ЭТУ ССЫЛКУ НА ВАШУ ИЗ GOOGLE APPS SCRIPT
+  const API_URL = "https://script.google.com/macros/s/AKfycby7dBLn9sO2C0Y1YPf_3Rqw2vB9jgIzf0meSMQrxLGQCg-jT0MTVqRv-1ouG-O1XsTi/exec";
+
+  const products = [
+    { id: 1, name: "Машина", price: 1500000, desc: "Самый лучший современный автомобиль!", img: "img/Machina_faerochat.jpg", currency: "$" },
+    { id: 2, name: "Кроссовки", price: 6990, desc: "Удобные и стильные", img: "img/Crossovki_faerochat.jpg", currency: "$" },
+    { id: 3, name: "Веник", price: 390, desc: "Надёжный инструмент для чата", img: "img/Venik_faerochat.jpg", currency: "$" },
+    { id: 4, name: "Футболка", price: 1290, desc: "С ДМИТРИЕМ СТЕКЛОПАКЕТОМ!", img: "img/Fytbloka_faerochat.jpg", currency: "$" },
+    { id: 5, name: "Nintendo Wii", price: 1000000000000, desc: "Легендарная консоль", img: "img/Wii_faerochat.jpg", currency: "$" }
+  ];
+
+  let cart = JSON.parse(localStorage.getItem('faero_cart')) || [];
+
+  async function updateOrderDisplay() {
+    if (API_URL === "https://script.google.com/macros/s/AKfycby7dBLn9sO2C0Y1YPf_3Rqw2vB9jgIzf0meSMQrxLGQCg-jT0MTVqRv-1ouG-O1XsTi/exec") {
+      document.getElementById('orderCountDisplay').textContent = "Demo";
+      return;
+    }
+    try {
+      const response = await fetch(API_URL);
+      const count = await response.text();
+      document.getElementById('orderCountDisplay').textContent = count;
+    } catch (e) { document.getElementById('orderCountDisplay').textContent = "0"; }
+  }
+
+  function renderProducts() {
+    document.getElementById('productGrid').innerHTML = products.map(p => `
+      <div class="product">
+        <img src="${p.img}" alt="${p.name}">
+        <h3>${p.name}</h3>
+        <p style="color: var(--muted); flex-grow: 1; font-size: 0.9em;">${p.desc}</p>
+        <div class="price">${p.price.toLocaleString()} ${p.currency}</div>
+        <button class="btn btn-primary" onclick="addToCart(${p.id})">В корзину</button>
+      </div>
+    `).join('');
+  }
 
   function renderCart() {
     const ul = document.getElementById('cartItems');
-    ul.innerHTML = '';
+    ul.innerHTML = cart.length === 0 ? '<li style="color: var(--muted); border: none;">Пусто</li>' : '';
     let total = 0;
-    cart.forEach((item,i)=>{
-      total += item.price;
+    cart.forEach((item, index) => {
+      total += item.price * (item.count || 1);
       const li = document.createElement('li');
-      li.innerHTML = `${item.name} — ${item.price} ₽ <span onclick="removeFromCart(${i})">✕</span>`;
+      li.innerHTML = `<div><b>${item.name}</b><br><small>${item.price.toLocaleString()} x ${item.count}</small></div>
+                      <span class="remove" onclick="removeFromCart(${index})">✕</span>`;
       ul.appendChild(li);
     });
-    document.getElementById('total').textContent = total;
-    localStorage.setItem('cart', JSON.stringify(cart));
+    document.getElementById('total').textContent = total.toLocaleString();
+    document.getElementById('cartCount').textContent = cart.reduce((s, i) => s + i.count, 0);
+    localStorage.setItem('faero_cart', JSON.stringify(cart));
   }
 
-  function addToCart(name, price) {
-    cart.push({name, price});
+  function addToCart(id) {
+    const item = cart.find(i => i.id === id);
+    if (item) item.count++; else cart.push({...products.find(p => p.id === id), count: 1});
     renderCart();
   }
 
-  function removeFromCart(i) {
-    cart.splice(i,1);
+  function removeFromCart(index) {
+    if (cart[index].count > 1) cart[index].count--; else cart.splice(index, 1);
     renderCart();
+  }
+
+  function openOrderModal() {
+    if (cart.length === 0) return alert("Корзина пуста!");
+    document.getElementById('orderModal').classList.add('active');
+  }
+
+  function closeOrderModal() { document.getElementById('orderModal').classList.remove('active'); }
+
+  async function submitOrder() {
+    const data = {
+      name: document.getElementById('orderName').value,
+      email: document.getElementById('orderEmail').value,
+      address: document.getElementById('orderAddress').value
+    };
+    if (!data.name || !data.email || !data.address) return alert("Заполни поля!");
+
+    try {
+      await fetch(API_URL, { method: "POST", body: JSON.stringify(data) });
+      alert(`Ура, ${data.name}! Заказ отправлен в таблицу.`);
+      cart = []; renderCart(); closeOrderModal(); updateOrderDisplay();
+    } catch (e) { alert("Ошибка API. Проверь ссылку в коде!"); }
   }
 
   function toggleTheme() {
-    document.body.classList.toggle('dark');
+    const dark = document.body.classList.toggle('dark');
+    document.getElementById('themeBtn').textContent = dark ? '☀️' : '🌙';
   }
 
-  renderCart();
+  renderProducts(); renderCart(); updateOrderDisplay();
 </script>
-
 </body>
 </html>
