@@ -187,7 +187,6 @@
 
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-    /* Модальные окна */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -231,7 +230,6 @@
       outline: none;
     }
 
-    /* Квиз стили */
     .quiz-container {
       position: relative;
       margin: 20px 0;
@@ -297,7 +295,7 @@
   <ul id="cartItems"></ul>
   <div style="margin-bottom: 15px; display: flex; justify-content: space-between;">
     <span>Итого:</span>
-    <b><span id="total">0</span> ₽</b>
+    <b><span id="total">0</span> $</b>
   </div>
   <button class="btn btn-primary" style="width: 100%" onclick="openOrderModal()">Оформить заказ</button>
 </div>
@@ -339,29 +337,27 @@
 <footer>© 2026 Faerochat Store — Aero Style</footer>
 
 <script>
-  // ЗАМЕНИТЕ ЭТУ ССЫЛКУ НА ВАШУ ИЗ GOOGLE APPS SCRIPT
+  // СЮДА ВСТАВЛЯЙ ССЫЛКУ ИЗ GOOGLE APPS SCRIPT
   const API_URL = "https://script.google.com/macros/s/AKfycby7dBLn9sO2C0Y1YPf_3Rqw2vB9jgIzf0meSMQrxLGQCg-jT0MTVqRv-1ouG-O1XsTi/exec";
 
   const products = [
-    { id: 1, name: "Машина", price: 1500000, desc: "Самый лучший современный автомобиль!", img: "img/Machina_faerochat.jpg", currency: "$" },
-    { id: 2, name: "Кроссовки", price: 6990, desc: "Удобные и стильные", img: "img/Crossovki_faerochat.jpg", currency: "$" },
-    { id: 3, name: "Веник", price: 390, desc: "Надёжный инструмент для чата", img: "img/Venik_faerochat.jpg", currency: "$" },
-    { id: 4, name: "Футболка", price: 1290, desc: "С ДМИТРИЕМ СТЕКЛОПАКЕТОМ!", img: "img/Fytbloka_faerochat.jpg", currency: "$" },
-    { id: 5, name: "Nintendo Wii", price: 1000000000000, desc: "Легендарная консоль", img: "img/Wii_faerochat.jpg", currency: "$" }
+    { id: 1, name: "Машина", price: 1500000, desc: "Самый лучший современный автомобиль!", img: "img/Machina_faerochat.jpg" },
+    { id: 2, name: "Кроссовки", price: 6990, desc: "Удобные и стильные", img: "img/Crossovki_faerochat.jpg" },
+    { id: 3, name: "Веник", price: 390, desc: "Надёжный инструмент для чата", img: "img/Venik_faerochat.jpg" },
+    { id: 4, name: "Футболка", price: 1290, desc: "С ДМИТРИЕМ СТЕКЛОПАКЕТОМ!", img: "img/Fytbloka_faerochat.jpg" },
+    { id: 5, name: "Nintendo Wii", price: 1000000000, desc: "Легендарная консоль", img: "img/Wii_faerochat.jpg" }
   ];
 
   let cart = JSON.parse(localStorage.getItem('faero_cart')) || [];
 
   async function updateOrderDisplay() {
-    if (API_URL === "https://script.google.com/macros/s/AKfycby7dBLn9sO2C0Y1YPf_3Rqw2vB9jgIzf0meSMQrxLGQCg-jT0MTVqRv-1ouG-O1XsTi/exec") {
-      document.getElementById('orderCountDisplay').textContent = "Demo";
-      return;
-    }
     try {
       const response = await fetch(API_URL);
       const count = await response.text();
       document.getElementById('orderCountDisplay').textContent = count;
-    } catch (e) { document.getElementById('orderCountDisplay').textContent = "0"; }
+    } catch (e) { 
+      document.getElementById('orderCountDisplay').textContent = "0"; 
+    }
   }
 
   function renderProducts() {
@@ -370,7 +366,7 @@
         <img src="${p.img}" alt="${p.name}">
         <h3>${p.name}</h3>
         <p style="color: var(--muted); flex-grow: 1; font-size: 0.9em;">${p.desc}</p>
-        <div class="price">${p.price.toLocaleString()} ${p.currency}</div>
+        <div class="price">${p.price.toLocaleString()} $</div>
         <button class="btn btn-primary" onclick="addToCart(${p.id})">В корзину</button>
       </div>
     `).join('');
@@ -383,23 +379,32 @@
     cart.forEach((item, index) => {
       total += item.price * (item.count || 1);
       const li = document.createElement('li');
-      li.innerHTML = `<div><b>${item.name}</b><br><small>${item.price.toLocaleString()} x ${item.count}</small></div>
+      li.innerHTML = `<div><b>${item.name}</b><br><small>${item.price.toLocaleString()} $ x ${item.count}</small></div>
                       <span class="remove" onclick="removeFromCart(${index})">✕</span>`;
       ul.appendChild(li);
     });
     document.getElementById('total').textContent = total.toLocaleString();
-    document.getElementById('cartCount').textContent = cart.reduce((s, i) => s + i.count, 0);
+    document.getElementById('cartCount').textContent = cart.reduce((s, i) => s + (i.count || 0), 0);
     localStorage.setItem('faero_cart', JSON.stringify(cart));
   }
 
   function addToCart(id) {
     const item = cart.find(i => i.id === id);
-    if (item) item.count++; else cart.push({...products.find(p => p.id === id), count: 1});
+    if (item) {
+      item.count = (item.count || 1) + 1;
+    } else {
+      const product = products.find(p => p.id === id);
+      cart.push({...product, count: 1});
+    }
     renderCart();
   }
 
   function removeFromCart(index) {
-    if (cart[index].count > 1) cart[index].count--; else cart.splice(index, 1);
+    if (cart[index].count > 1) {
+      cart[index].count--;
+    } else {
+      cart.splice(index, 1);
+    }
     renderCart();
   }
 
@@ -409,8 +414,6 @@
   }
 
   function closeOrderModal() { document.getElementById('orderModal').classList.remove('active'); }
-
-  // КВИЗ ЛОГИКА
   function openQuiz() { document.getElementById('quizModal').classList.add('active'); }
   function closeQuiz() { 
     document.getElementById('quizModal').classList.remove('active');
@@ -419,9 +422,8 @@
 
   function checkQuiz() {
     const val = document.getElementById('quizAnswer').value.trim().toLowerCase();
-    // Ответы, которые мы принимаем
     if (val.includes('вода') || val.includes('суп') || val.includes('дмитрий')) {
-      alert("ШЕФ-ПОВАР ОДОБРЯЕТ! Это настоящий кулинарный шедевр.");
+      alert("ШЕФ-ПОВАР ОДОБРЯЕТ!");
       closeQuiz();
     } else {
       alert("Повар недоволен... Попробуй еще раз!");
@@ -440,7 +442,7 @@
       await fetch(API_URL, { method: "POST", body: JSON.stringify(data) });
       alert(`Ура, ${data.name}! Заказ отправлен.`);
       cart = []; renderCart(); closeOrderModal(); updateOrderDisplay();
-    } catch (e) { alert("Ошибка API!"); }
+    } catch (e) { alert("Ошибка при отправке!"); }
   }
 
   function toggleTheme() {
