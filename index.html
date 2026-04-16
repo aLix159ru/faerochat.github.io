@@ -10,25 +10,27 @@
       --bg-soft: rgba(238, 241, 255, 0.8);
       --text: #0f172a;
       --muted: #64748b;
-      --card: rgba(255, 255, 255, 0.7);
+      --card: rgba(255, 255, 255, 0.8);
       --accent: #6366f1;
       --accent-2: #a855f7;
       --glass-border: rgba(255, 255, 255, 0.5);
+      --input-bg: rgba(255, 255, 255, 0.9);
     }
 
     body.dark {
       --bg: #050814;
-      --bg-soft: rgba(12, 18, 48, 0.8);
-      --text: #e5e7eb;
+      --bg-soft: rgba(12, 18, 48, 0.9);
+      --text: #f1f5f9;
       --muted: #94a3b8;
-      --card: rgba(15, 23, 42, 0.7);
+      --card: rgba(15, 23, 42, 0.85);
       --glass-border: rgba(255, 255, 255, 0.1);
+      --input-bg: rgba(30, 41, 59, 0.9);
     }
 
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: var(--bg);
       color: var(--text);
       transition: background 0.3s, color 0.3s;
@@ -37,7 +39,7 @@
 
     header {
       background: var(--bg-soft);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(15px);
       padding: 16px 24px;
       display: flex;
       justify-content: space-between;
@@ -53,7 +55,7 @@
 
     .header-actions { display: flex; gap: 10px; }
 
-    .btn { padding: 10px 20px; border-radius: 12px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+    .btn { padding: 10px 20px; border-radius: 12px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s; font-family: inherit; }
     .btn:active { transform: scale(0.95); }
     .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -61,39 +63,66 @@
     .products { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; max-width: 1200px; margin: 40px auto; padding: 0 24px; }
     .product { background: var(--card); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 20px; display: flex; flex-direction: column; transition: 0.3s; }
     .product:hover { transform: translateY(-8px); }
-    .product img { width: 100%; height: 200px; object-fit: cover; border-radius: 18px; margin-bottom: 16px; }
+    
+    /* Кликабельная картинка */
+    .product img { 
+      width: 100%; 
+      height: 200px; 
+      object-fit: cover; 
+      border-radius: 18px; 
+      margin-bottom: 16px; 
+      cursor: zoom-in;
+      transition: opacity 0.2s;
+    }
+    .product img:hover { opacity: 0.9; }
 
     .price { font-weight: 800; font-size: 22px; margin: 12px 0; background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
     .cart { position: fixed; right: 24px; bottom: 24px; width: 320px; background: var(--card); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.2); z-index: 99; }
     .cart ul { list-style: none; padding: 0; max-height: 200px; overflow-y: auto; }
+    .cart li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--glass-border); }
+    .remove { color: #ef4444; cursor: pointer; font-weight: bold; }
 
     .stats-widget { position: fixed; left: 24px; bottom: 24px; background: var(--card); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); padding: 12px 20px; border-radius: 20px; font-size: 14px; z-index: 90; display: flex; align-items: center; gap: 10px; }
     .stats-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px #22c55e; animation: pulse 2s infinite; }
 
-    /* МОДАЛКИ */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1000; }
+    /* МОДАЛКИ ОБЩИЕ */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1000; }
     .modal-overlay.active { display: flex; }
-    .modal-content { background: var(--card); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); padding: 32px; border-radius: 30px; width: 90%; max-width: 450px; text-align: center; }
+    .modal-content { background: var(--card); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); padding: 32px; border-radius: 30px; width: 95%; max-width: 450px; text-align: center; color: var(--text); }
 
-    .form-group { margin-bottom: 16px; text-align: left; }
-    .form-group label { display: block; margin-bottom: 6px; font-size: 14px; color: var(--muted); }
-    .form-group input { width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.1); color: var(--text); outline: none; }
-
-    /* АНИМАЦИЯ ЛИНИИ ЕБЗ */
-    .ebz-loader { margin: 20px 0; height: 40px; display: flex; justify-content: center; align-items: center; }
-    .ebz-line { width: 100%; height: 2px; background: var(--accent); position: relative; transition: 0.3s; }
-    .ebz-line.wave { animation: ebz-wave 0.5s infinite linear; height: 4px; border-radius: 2px; }
-    
-    @keyframes ebz-wave {
-      0% { transform: scaleY(1); }
-      50% { transform: scaleY(3); background: var(--accent-2); }
-      100% { transform: scaleY(1); }
+    /* МОДАЛКА ПРОСМОТРА КАРТИНКИ */
+    #imagePreviewModal .modal-content {
+      max-width: 80vw;
+      padding: 10px;
+      background: rgba(255,255,255,0.1);
+      border: none;
+    }
+    #imagePreviewModal img {
+      max-width: 100%;
+      max-height: 80vh;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     }
 
-    .checkmark { font-size: 40px; color: #22c55e; display: none; }
-    .checkmark.show { display: block; animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    @keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
+    /* АНИМАЦИЯ ЕБЗ */
+    .ebz-loader { margin: 30px 0; height: 50px; display: flex; justify-content: center; align-items: center; }
+    .ebz-line { width: 100%; height: 3px; background: var(--accent); transition: 0.3s; }
+    .ebz-line.wave { animation: ebz-wave 0.6s infinite ease-in-out; height: 6px; border-radius: 3px; }
+    
+    @keyframes ebz-wave {
+      0%, 100% { transform: scaleY(1); opacity: 0.5; }
+      50% { transform: scaleY(4); background: var(--accent-2); opacity: 1; }
+    }
+
+    .checkmark { font-size: 50px; color: #22c55e; display: none; }
+    .checkmark.show { display: block; animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+    /* КВИЗ */
+    .quiz-card { position: relative; border-radius: 20px; overflow: hidden; margin: 20px 0; border: 2px solid var(--glass-border); }
+    .quiz-card img { width: 100%; display: block; }
+    .quiz-input-overlay { position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%); width: 85%; }
+    .quiz-input-overlay input { width: 100%; padding: 12px; border: 3px solid #000; background: #fff; color: #000; font-weight: bold; text-align: center; border-radius: 5px; }
 
     footer { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
   </style>
@@ -106,7 +135,7 @@
     <span>Faerochat</span>
   </div>
   <div class="header-actions">
-    <button class="btn" style="background: var(--card); border: 1px solid var(--glass-border)" onclick="openQuiz()">🧩 Квиз</button>
+    <button class="btn" style="background: var(--card); border: 1px solid var(--glass-border); color: var(--text)" onclick="openQuiz()">🧩 Квиз</button>
     <button class="btn" style="background: var(--card); border: 1px solid var(--glass-border)" onclick="toggleTheme()" id="themeBtn">🌙</button>
   </div>
 </header>
@@ -115,36 +144,43 @@
 
 <div class="stats-widget">
   <div class="stats-dot"></div>
-  <span>Всего заказов: <strong id="orderCountDisplay">...</strong></span>
+  <span style="color: var(--text)">Всего заказов: <strong id="orderCountDisplay">...</strong></span>
 </div>
 
 <div class="cart" id="cartOverlay">
-  <div style="display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center;">
+  <div style="display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center; color: var(--text)">
     <strong>🛒 Корзина</strong>
     <span id="cartCount" style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; font-size: 12px;">0</span>
   </div>
-  <ul id="cartItems"></ul>
-  <div style="margin-bottom: 15px; display: flex; justify-content: space-between;">
+  <ul id="cartItems" style="color: var(--text)"></ul>
+  <div style="margin-top: 15px; display: flex; justify-content: space-between; color: var(--text)">
     <span>Итого:</span>
     <b><span id="total">0</span> $</b>
   </div>
-  <button class="btn btn-primary" style="width: 100%" onclick="openOrderModal()">Оформить заказ</button>
+  <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="openOrderModal()">Оформить заказ</button>
+</div>
+
+<div class="modal-overlay" id="imagePreviewModal" onclick="closeImagePreview()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <img id="fullImage" src="" alt="Preview">
+    <p style="color: white; margin-top: 10px; font-size: 14px;">Нажмите в любое место, чтобы закрыть</p>
+  </div>
 </div>
 
 <div class="modal-overlay" id="orderModal">
   <div class="modal-content">
-    <h2 style="text-align: left; margin-bottom: 20px;">📦 Оформление</h2>
-    <div class="form-group">
-      <label>Ваше имя</label>
-      <input type="text" id="orderName" placeholder="Дмитрий Стеклопакет">
+    <h2 style="text-align: left; margin: 0 0 20px 0;">📦 Оформление</h2>
+    <div style="text-align: left; margin-bottom: 16px;">
+      <label style="font-size: 14px; color: var(--muted);">Ваше имя</label>
+      <input type="text" id="orderName" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text);" placeholder="Дмитрий Стеклопакет">
     </div>
-    <div class="form-group">
-      <label>Ваш e-mail</label>
-      <input type="email" id="orderEmail" placeholder="faero@mail.com">
+    <div style="text-align: left; margin-bottom: 16px;">
+      <label style="font-size: 14px; color: var(--muted);">Ваш e-mail</label>
+      <input type="email" id="orderEmail" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text);" placeholder="faero@mail.com">
     </div>
-    <div class="form-group">
-      <label>Адрес доставки</label>
-      <input type="text" id="orderAddress" placeholder="ул. Аэродинамическая, д. 7">
+    <div style="text-align: left; margin-bottom: 16px;">
+      <label style="font-size: 14px; color: var(--muted);">Адрес доставки</label>
+      <input type="text" id="orderAddress" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text);" placeholder="ул. Аэродинамическая, д. 7">
     </div>
     <button class="btn btn-primary" id="finalOrderBtn" style="width: 100%; margin-top: 10px;" onclick="startOrderProcess()">Купить</button>
     <button class="btn" style="width: 100%; margin-top: 10px; background: transparent; color: var(--muted)" onclick="closeOrderModal()">Отмена</button>
@@ -153,7 +189,7 @@
 
 <div class="modal-overlay" id="ebzModal">
   <div class="modal-content">
-    <h3 id="ebzStatus">Подготовка...</h3>
+    <h3 id="ebzStatus">Инициализация...</h3>
     <div class="ebz-loader">
       <div id="ebzLine" class="ebz-line"></div>
       <div id="ebzCheck" class="checkmark">✔</div>
@@ -164,13 +200,15 @@
 
 <div class="modal-overlay" id="quizModal">
   <div class="modal-content">
-    <h2>Что это за блюдо?</h2>
-    <div style="position: relative; margin: 20px 0; border-radius: 15px; overflow: hidden;">
-      <img src="img/photo_2026-04-16_19-49-27.jpg" style="width: 100%;">
-      <input type="text" id="quizAnswer" placeholder="Твой ответ..." style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 70%; padding: 10px; border: 2px solid #000;">
+    <h2 style="margin: 0;">Кто это приготовил?</h2>
+    <div class="quiz-card">
+      <img src="img/photo_2026-04-16_19-49-27.jpg">
+      <div class="quiz-input-overlay">
+        <input type="text" id="quizAnswer" placeholder="Что в кастрюле?">
+      </div>
     </div>
     <button class="btn btn-primary" style="width: 100%;" onclick="checkQuiz()">Проверить</button>
-    <button class="btn" style="width: 100%; margin-top: 10px; background: transparent;" onclick="closeQuiz()">Закрыть</button>
+    <button class="btn" style="width: 100%; margin-top: 10px; background: transparent; color: var(--muted)" onclick="closeQuiz()">Отмена</button>
   </div>
 </div>
 
@@ -189,18 +227,30 @@
 
   let cart = JSON.parse(localStorage.getItem('faero_cart')) || [];
 
+  // ФУНКЦИИ ПРОСМОТРА КАРТИНКИ
+  function openImagePreview(src) {
+    const modal = document.getElementById('imagePreviewModal');
+    const fullImg = document.getElementById('fullImage');
+    fullImg.src = src;
+    modal.classList.add('active');
+  }
+
+  function closeImagePreview() {
+    document.getElementById('imagePreviewModal').classList.remove('active');
+  }
+
   async function updateOrderDisplay() {
     try {
       const response = await fetch(API_URL);
       const count = await response.text();
       document.getElementById('orderCountDisplay').textContent = count;
-    } catch (e) { document.getElementById('orderCountDisplay').textContent = "!"; }
+    } catch (e) { document.getElementById('orderCountDisplay').textContent = "0"; }
   }
 
   function renderProducts() {
     document.getElementById('productGrid').innerHTML = products.map(p => `
       <div class="product">
-        <img src="${p.img}" alt="${p.name}">
+        <img src="${p.img}" onclick="openImagePreview('${p.img}')" title="Нажмите, чтобы увеличить">
         <h3>${p.name}</h3>
         <p style="color: var(--muted); flex-grow: 1; font-size: 0.9em;">${p.desc}</p>
         <div class="price">${p.price.toLocaleString()} $</div>
@@ -214,11 +264,11 @@
     ul.innerHTML = cart.length === 0 ? '<li style="color: var(--muted); border: none;">Пусто</li>' : '';
     let total = 0;
     cart.forEach((item, index) => {
-      total += item.price * (item.count || 1);
+      total += item.price * item.count;
       ul.innerHTML += `<li><div><b>${item.name}</b><br><small>${item.price.toLocaleString()} $ x ${item.count}</small></div><span class="remove" onclick="removeFromCart(${index})">✕</span></li>`;
     });
     document.getElementById('total').textContent = total.toLocaleString();
-    document.getElementById('cartCount').textContent = cart.reduce((s, i) => s + (i.count || 0), 0);
+    document.getElementById('cartCount').textContent = cart.reduce((s, i) => s + i.count, 0);
     localStorage.setItem('faero_cart', JSON.stringify(cart));
   }
 
@@ -233,49 +283,26 @@
     renderCart();
   }
 
-  function openOrderModal() { if (cart.length > 0) document.getElementById('orderModal').classList.add('active'); }
+  function openOrderModal() { document.getElementById('orderModal').classList.add('active'); }
   function closeOrderModal() { document.getElementById('orderModal').classList.remove('active'); }
 
-  // ПРОЦЕСС ЗАКАЗА И ЕБЗ
   async function startOrderProcess() {
     const name = document.getElementById('orderName').value;
     const email = document.getElementById('orderEmail').value;
     const address = document.getElementById('orderAddress').value;
-
     if (!name || !email || !address) return alert("Заполни все поля!");
-
-    // Блокируем кнопку, чтобы не нажали дважды
     document.getElementById('finalOrderBtn').disabled = true;
-    
-    // Закрываем окно ввода, открываем окно ЕБЗ
     closeOrderModal();
     document.getElementById('ebzModal').classList.add('active');
-    const statusText = document.getElementById('ebzStatus');
+    const status = document.getElementById('ebzStatus');
     const line = document.getElementById('ebzLine');
-
-    // 1. Соединение (через 1 сек)
-    setTimeout(() => {
-      statusText.textContent = "Соединение с ЕБЗ (Единой Базой Заказов)...";
-      line.classList.add('wave');
-    }, 1000);
-
-    // 2. Отправка (через 2 сек после предыдущего)
+    setTimeout(() => { status.textContent = "Соединение с ЕБЗ..."; line.classList.add('wave'); }, 1000);
     setTimeout(async () => {
-      statusText.textContent = "Отправка заказа на ЕБЗ...";
-      
-      // Сама отправка данных в таблицу
-      try {
-        await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify({ name, email, address })
-        });
-      } catch (e) { console.error("Ошибка сети, но мы идем дальше..."); }
-
+      status.textContent = "Отправка заказа...";
+      try { await fetch(API_URL, { method: "POST", body: JSON.stringify({ name, email, address }) }); } catch (e) {}
     }, 3000);
-
-    // 3. Финал (еще через 2 сек)
     setTimeout(() => {
-      statusText.textContent = "Заказ добавлен в ЕБЗ! Ожидайте доставки";
+      status.textContent = "Заказ добавлен в ЕБЗ!";
       line.style.display = "none";
       document.getElementById('ebzCheck').classList.add('show');
       document.getElementById('ebzCloseBtn').style.display = "block";
@@ -284,26 +311,23 @@
   }
 
   function finishEverything() {
-    cart = [];
-    renderCart();
+    cart = []; renderCart();
     document.getElementById('ebzModal').classList.remove('active');
-    // Сбрасываем вид окна ЕБЗ для следующего раза
-    document.getElementById('ebzStatus').textContent = "Подготовка...";
-    document.getElementById('ebzLine').style.display = "block";
-    document.getElementById('ebzLine').classList.remove('wave');
-    document.getElementById('ebzCheck').classList.remove('show');
-    document.getElementById('ebzCloseBtn').style.display = "none";
-    document.getElementById('finalOrderBtn').disabled = false;
+    setTimeout(() => {
+      document.getElementById('ebzStatus').textContent = "Инициализация...";
+      document.getElementById('ebzLine').style.display = "block";
+      document.getElementById('ebzLine').classList.remove('wave');
+      document.getElementById('ebzCheck').classList.remove('show');
+      document.getElementById('ebzCloseBtn').style.display = "none";
+      document.getElementById('finalOrderBtn').disabled = false;
+    }, 500);
   }
 
   function openQuiz() { document.getElementById('quizModal').classList.add('active'); }
   function closeQuiz() { document.getElementById('quizModal').classList.remove('active'); }
   function checkQuiz() {
-    const val = document.getElementById('quizAnswer').value.toLowerCase();
-    if (val.includes('вода') || val.includes('суп')) {
-      alert("ШЕФ-ПОВАР ОДОБРЯЕТ!");
-      closeQuiz();
-    } else alert("Не-а!");
+    const val = document.getElementById('quizAnswer').value.trim().toLowerCase();
+    if (val.includes('вода') || val.includes('суп')) { alert("ШЕФ-ПОВАР ОДОБРЯЕТ!"); closeQuiz(); } else alert("Не-а!");
   }
 
   function toggleTheme() {
